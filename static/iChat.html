@@ -177,7 +177,7 @@
         </div>
         <div class="iTalk-form-inputBox">
           <input type="text" class="iTalk-user-name" placeholder="用户名" v-model="user.name">
-          <input type="text" class="iTalk-user-password" placeholder="密码">
+          <input type="text" class="iTalk-user-password" placeholder="密码" v-model='user.password' >
           <button type="button" class="iTalk-formBtn" @click="login(user)">登录</button>
         </div>
       </form>

@@ -430,12 +430,12 @@ new Vue({
             }
             this.saveMessage(tidings);
             if(to.type!="user"){
-                this.socket.emit("groupMessage",from,to,message,type);
+                this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type});
             }else {
-                this.socket.emit("message",from,to,message,type);
+                this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type});
             }
         },
-        receiveMessage(from,to,message,type) {
+        receiveMessage({'from':from,'to':to,'message':message,'type':type}) {
             let threadId=from.id;
             if(to.type!="user"){
                 threadId=to.id;
@@ -488,15 +488,17 @@ new Vue({
         },
         initSocketEvent(){
             let _this=this;
-            _this.socket=io("http://148.70.90.247");
-            _this.socket.on("message",(from,to,message,type)=>{
-                _this.receiveMessage(from,to,message,type)
+            _this.socket=io("http://localhost:3000");
+            _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type})=>{
+                _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
             })
-            _this.socket.on("groupMessage",(from,to,message,type)=>{
-                _this.receiveMessage(from,to,message,type)
+            _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type})=>{
+                _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
                 _this.cmd(message);
             })
-            _this.socket.on("system",(user,type)=>{
+            _this.socket.on("system",(data)=>{
+                const type =data[1];
+                const users = data[0];
                 switch (type) {
                     case "join":
                         _this.addUser(user);

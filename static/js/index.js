@@ -430,12 +430,12 @@ new Vue({
       }
       this.saveMessage(tidings);
       if(to.type!="user"){
-        this.socket.emit("groupMessage",from,to,message,type);
+        this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type});
       }else {
-        this.socket.emit("message",from,to,message,type);
+        this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type});
       }
     },
-    receiveMessage(from,to,message,type) {
+    receiveMessage({'from':from,'to':to,'message':message,'type':type}) {
       let threadId=from.id;
       if(to.type!="user"){
         threadId=to.id;
@@ -473,33 +473,42 @@ new Vue({
         }
       })
     },
-    addUser(user){
-      let _this=this,index=-1;
-      _this.onLineUsers.forEach((item,i)=>{
-        if(user.id==item.id){
-          index=i;
-        }
-      })
-      if(index==-1){
-        _this.onLineUsers.push(user);
-      }else {
-        _this.onLineUsers[index]=user;
-      }
-    },
+    // addUser(user){
+    //   let _this=this,index=-1;
+    //   _this.onLineUsers.forEach((item,i)=>{
+    //     if(user.id==item.id){
+    //       index=i;
+    //     }
+    //   })
+    //   if(index==-1){
+    //     _this.onLineUsers.push(user);
+    //   }else {
+    //     _this.onLineUsers[index]=user;
+    //   }
+    // },
     initSocketEvent(){
       let _this=this;
-      _this.socket=io();
-      _this.socket.on("message",(from,to,message,type)=>{
-        _this.receiveMessage(from,to,message,type)
+      _this.socket=io.connect('http://localhost:3000');
+      _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type})=>{
+        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
       })
-      _this.socket.on("groupMessage",(from,to,message,type)=>{
-        _this.receiveMessage(from,to,message,type)
+      _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type})=>{
+        if(_this.loginUser.id!=from.id){
+          _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
+        }
         _this.cmd(message);
       })
-      _this.socket.on("system",(user,type)=>{
+      _this.socket.on("system",(data)=>{
+        const type =data[1];
+        const users = data[0];
         switch (type) {
           case "join":
-            _this.addUser(user);
+            // _this.addUser(user);
+            //更新侧边栏
+            if(users.length>0){
+              _this.onLineUsers=users;
+            }
+            console.log(user+"======join")
             break;
           case "logout":
             _this.removeUser(user);
@@ -548,7 +557,7 @@ new Vue({
       _this.socket.on("loginSuccess",(user,users)=>{
         _this.loginUser=user;
         if(users.length>0){
-          _this.onLineUsers=[].concat([_this.onLineUsers[0]],users);
+          _this.onLineUsers=users;
         }
       })
       _this.socket.on("loginFail",(message)=>{

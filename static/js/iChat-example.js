@@ -193,7 +193,7 @@ if (/Android/gi.test(navigator.userAgent)) {
     })
 }
 //创建链接
-var socket = io.connect("http://148.70.90.247");
+var socket =  io.connect('http://localhost:3000');
 //登录组件
 Vue.component('login', {
     template: '#login',

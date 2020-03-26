@@ -234,7 +234,7 @@
         </div>
         <div class="webTalk-form-inputBox">
           <input type="text" class="webTalk-user-name" placeholder="用户名" v-model="user.name">
-          <input type="text" class="webTalk-user-password" placeholder="密码">
+          <input type="text" class="webTalk-user-password" placeholder="密码" v-model="user.password">
           <button type="button" class="webTalk-formBtn" @click="login(user)">登录</button>
         </div>
       </form>
