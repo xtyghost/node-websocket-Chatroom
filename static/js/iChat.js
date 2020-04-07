@@ -301,7 +301,7 @@
         let opt=_extend({
           type:"info",
           text:"",
-          duration:3000
+          time:3000
         },option)
         let Message=Vue.extend({
           template:"#alter",
@@ -317,7 +317,7 @@
             this.show=true;
             inter=setTimeout(function () {
               _this.show=false;
-            },opt.duration)
+            },opt.time)
           },
           methods:{
             delELe:function () {
@@ -417,12 +417,12 @@ new Vue({
       }
       this.saveMessage(tidings);
       if(to.type!="user"){
-        this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type});
+        this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false'});
       }else {
-        this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type});
+        this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false'});
       }
     },
-    receiveMessage({'from':from,'to':to,'message':message,'type':type}) {
+    receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read}) {
       let threadId=from.id;
       if(to.type!="user"){
         threadId=to.id;
@@ -476,11 +476,11 @@ new Vue({
     initSocketEvent(){
       let _this=this;
       _this.socket=io("http://localhost:3000");
-      _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type})=>{
-        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
+      _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
+        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
       })
-      _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type})=>{
-        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
+      _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
+        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
       })
       _this.socket.on("system",(data)=>{
         const type =data[1];

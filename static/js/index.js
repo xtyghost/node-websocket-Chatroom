@@ -315,7 +315,7 @@
         let opt=_extend({
           type:"info",
           text:"",
-          duration:3000
+          time:3000
         },option)
         let Message=Vue.extend({
           template:"#alter",
@@ -331,7 +331,7 @@
             this.show=true;
             inter=setTimeout(function () {
               _this.show=false;
-            },opt.duration)
+            },opt.time)
           },
           methods:{
             delELe:function () {
@@ -430,12 +430,12 @@ new Vue({
       }
       this.saveMessage(tidings);
       if(to.type!="user"){
-        this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type});
+        this.socket.emit("groupMessage",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false'});
       }else {
-        this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type});
+        this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false'});
       }
     },
-    receiveMessage({'from':from,'to':to,'message':message,'type':type}) {
+    receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read}) {
       let threadId=from.id;
       if(to.type!="user"){
         threadId=to.id;
@@ -447,7 +447,7 @@ new Vue({
         to:to,
         content:message,
         type:type,
-        time:new Date().getTime(),
+        time:time,
         isRead:isRead,
       }
       this.saveMessage(tidings)
@@ -489,12 +489,14 @@ new Vue({
     initSocketEvent(){
       let _this=this;
       _this.socket=io.connect('http://localhost:3000');
-      _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type})=>{
-        _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
-      })
-      _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type})=>{
+      _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
         if(_this.loginUser.id!=from.id){
-          _this.receiveMessage({'from':from,'to':to,'message':message,'type':type})
+          _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
+        }
+      })
+      _this.socket.on("groupMessage",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
+        if(_this.loginUser.id!=from.id){
+          _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
         }
         _this.cmd(message);
       })
@@ -599,6 +601,10 @@ new Vue({
       if(this.threads[id]){
         let messages=this.threads[id];
         messages.forEach((item,index)=>{
+        if(_this.threads[id][index].isRead==true){
+           //发送已读事件
+           this.socket.emit("readMessage",{'from':_this.threads[id][index].from,'to':_this.threads[id][index].to,'message':_this.threads[id][index].message,'type':_this.threads[id][index].type,'time': _this.threads[id][index].time,read:'true'});
+        }
           _this.threads[id][index].isRead=true;
         })
       }

@@ -257,7 +257,7 @@
         "      <div class=\"a-player-songInfo\">\n" +
         "        <div class=\"a-player-songName\">{{song.title}}</div>\n" +
         "        <div class=\"a-player-songAuthor\">{{song.author}}</div>\n" +
-        "        <div class=\"a-player-songTime\">{{formatTime(duration)}}</div>\n" +
+        "        <div class=\"a-player-songTime\">{{formatTime(time)}}</div>\n" +
         "      </div>\n" +
         "      <div class=\"a-player-ctrlBox\">\n" +
         "        <div class=\"a-player-ctrlBtn iconfont icon-prev\" @click=\"prev()\"></div>\n" +
@@ -375,7 +375,7 @@
             song:{},
             audio:null,
             currentTime:0,
-            duration:0,
+            time:0,
             showError:false,
             message:"",
             inter:null,
@@ -395,8 +395,8 @@
               el:$el.querySelector(".a-player-timeBox"),
               percent:0,
               update:function (val) {
-                if(_this.audio.duration){
-                  _this.audio.currentTime=_this.audio.duration*val;
+                if(_this.audio.time){
+                  _this.audio.currentTime=_this.audio.time*val;
                 }
               }
             })
@@ -409,8 +409,8 @@
                 _this.volume=val;
               }
             })
-            _this.audio.ondurationchange=function () {
-              _this.duration=_this.audio.duration;
+            _this.audio.ontimechange=function () {
+              _this.time=_this.audio.time;
             }
             _this.audio.onerror=function (e) {
               _this.showErrorMsg("歌曲《"+_this.song.title+"》加载出错了！")
@@ -422,12 +422,12 @@
               })
             }
             _this.audio.addEventListener("timeupdate",function (e) {
-              _this.timeCtrl.setPercent(_this.audio.currentTime/_this.audio.duration);
+              _this.timeCtrl.setPercent(_this.audio.currentTime/_this.audio.time);
               _this.currentTime=_this.audio.currentTime;
             })
             _this.audio.addEventListener("progress",function (e) {
-              if(_this.audio.buffered.length>0&&_this.audio.duration){
-                _this.timeCtrl.setPreLoad(_this.audio.buffered.end(_this.audio.buffered.length-1)/_this.audio.duration)
+              if(_this.audio.buffered.length>0&&_this.audio.time){
+                _this.timeCtrl.setPreLoad(_this.audio.buffered.end(_this.audio.buffered.length-1)/_this.audio.time)
               }
             })
             _this.searchList(_this.listId);
