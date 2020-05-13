@@ -66,7 +66,7 @@
               <div class="webTalk-footer">
                 <div class="webTalk-toolBar-box">
                   <expression @picker-expression="pickerExpression"></expression>
-                  <more       @picker-expression="pickerExpression"></more>
+                  <more       @picker-expression="pickerExpression" :token="token"></more>
                 </div>
                 <div class="webTalk-message-inputBox">
                   <textarea class="webTalk-message-input ui-scroll" v-model="text" placeholder="请输入要说的话..." @keyup.enter="send(text)"></textarea>

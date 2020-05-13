@@ -193,7 +193,7 @@ if (/Android/gi.test(navigator.userAgent)) {
     })
 }
 //创建链接
-var socket =  io.connect('112.17.176.110:245');
+var socket =  io.connect('192.168.1.5:245');
 //登录组件
 Vue.component('login', {
     template: '#login',

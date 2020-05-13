@@ -223,6 +223,7 @@
         file: null,
       }
     },
+    props:['token'],
     created:function () {
       let _this=this;
       document.addEventListener("click",(e)=>{
@@ -237,8 +238,10 @@
                this.formData.append("file",this.file); //将file属性添加到formData里
         　　　　//此时formData就是我们要向后台传的参数了
                 var that = this;
-                axios.post("http://112.17.176.110:254/fdfs/upload_file/",this.formData,{
-                  　'Content-Type':false,
+                axios.post("http://192.168.1.5:248/fdfs/upload_file/",this.formData,{
+                   headers:{
+                    'token': that.token,
+                   }
                 }).then(function(res){
                   　console.log(res,"此处应该是请求成功的回调")　　
                     that.$emit("picker-expression",{"title":res.data.data.originalFileName})
@@ -325,6 +328,7 @@
         }
       },
       login(user){
+        this.isLogin =true
         this.$emit("login",user)
       },
       randomText() {
@@ -409,6 +413,7 @@ new Vue({
         }
       ],
       threadId:"",
+      token:"",
       setting:{
         isVoice:true,
         isTime:true,
@@ -531,7 +536,7 @@ new Vue({
     // },
     initSocketEvent(){
       let _this=this;
-      _this.socket=io.connect('112.17.176.110:245');
+      _this.socket=io.connect('192.168.1.5:245');
       _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
         if(_this.loginUser.id!=from.id){
           _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
@@ -541,6 +546,10 @@ new Vue({
         if(_this.loginUser.id!=from.id){
           _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
         }
+        _this.cmd(message);
+      })
+      _this.socket.on("cacheMessage",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
+          _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
         _this.cmd(message);
       })
       _this.socket.on("system",(data)=>{
@@ -610,8 +619,10 @@ new Vue({
           type:"warning",
           text:message
         })
-
       })
+      _this.socket.on("token",(token)=>{
+        _this.token = token;
+       })
     },
     changeChannel(user){
       this.threadId=user.id;
@@ -628,7 +639,7 @@ new Vue({
       this.text="";
     },
     pickerExpression(expression){
-      this.text+=expression.title;
+      this.pickerExpression+=expression.title;
     },
     isHave(tidings){
       let flag=false;

@@ -57,5 +57,5 @@ app.get("/", (req, res) => {
 })
 //启动服务器
 server.listen(PORT,()=> {
-  console.log(`服务器已启动在：${PORT}端口`, `112.17.176.110:${PORT}`)
+  console.log(`服务器已启动在：${PORT}端口`, `192.168.1.5:${PORT}`)
 });
