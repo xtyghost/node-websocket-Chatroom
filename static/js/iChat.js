@@ -475,7 +475,7 @@ new Vue({
     // },
     initSocketEvent(){
       let _this=this;
-      _this.socket=io("http://localhost:3000");
+      _this.socket=io("112.17.176.110:245");
       _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
         _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
       })

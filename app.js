@@ -3,7 +3,7 @@ const express = require('express'),
   server = require('http').createServer(app),
   io = require('socket.io').listen(server),
   //用于保存用户信息的数组
-  PORT=3001,
+  PORT=246,
   users = [];
 let kit = {
   //判断用户是否存在
@@ -57,5 +57,5 @@ app.get("/", (req, res) => {
 })
 //启动服务器
 server.listen(PORT,()=> {
-  console.log(`服务器已启动在：${PORT}端口`, `http://localhost:${PORT}`)
+  console.log(`服务器已启动在：${PORT}端口`, `112.17.176.110:${PORT}`)
 });

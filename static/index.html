@@ -66,6 +66,7 @@
               <div class="webTalk-footer">
                 <div class="webTalk-toolBar-box">
                   <expression @picker-expression="pickerExpression"></expression>
+                  <more       @picker-expression="pickerExpression"></more>
                 </div>
                 <div class="webTalk-message-inputBox">
                   <textarea class="webTalk-message-input ui-scroll" v-model="text" placeholder="请输入要说的话..." @keyup.enter="send(text)"></textarea>
@@ -103,7 +104,7 @@
             </ul>
           </div>
         </div>
-        <div class="webTalk-panel" v-show="menu=='about'">
+        <!-- <div class="webTalk-panel" v-show="menu=='about'">
           <div class="webTalk-about-box">
             <div class="webTalk-about-header">关于</div>
             <ul class="webTalk-about-list">
@@ -123,7 +124,7 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
         <span class="webTalk-connect-status iconfont icon-wifi"
               :class="{'webTalk-connect-fail':!isOnline}"
               @click.stop="isShowLog=true"
@@ -212,6 +213,26 @@
     </transition>
   </div>
 </template>
+<!-- 文件上传等功能 -->
+<template id="more">
+  <div class="webTalk-expression">
+      <span class="webTalk-toolBar" @click.stop="toggleShow()">
+        <svg version="1.1" viewBox="0 0 35.876 35.876" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(-1.5317 -1015.4)">
+           <circle transform="matrix(-.5 -.86603 .86603 -.5 0 0)" cx="-904.64" cy="-499.82" r="16.205" fill="none" stroke="#ff5e00" stroke-width="3.4773"/>
+           <flowRoot fill="#000000" font-family="Sans" font-size="40px" letter-spacing="0px" word-spacing="0px" style="line-height:125%" xml:space="preserve"><flowRegion><rect x="-2.4622" y="-5.562" width="124.94" height="43.31"/></flowRegion><flowPara/></flowRoot>
+           <rect x="18.079" y="1025.2" width="2.7808" height="16.392" rx=".20089" ry=".20089" fill="#ff5e00"/>
+           <rect transform="rotate(90)" x="1032" y="-27.666" width="2.7808" height="16.392" rx=".20089" ry=".20089" fill="#ff5e00"/>
+          </g>
+         </svg>
+      </span>
+    <transition name="slider">
+      <div class="webTalk-expression-panel" v-show="isShow">
+        <input type="file" id="fileExport" @change="handleFileChange" ref="inputer" multiple ="multiple">
+      </div>
+    </transition>
+  </div>
+</template>
 <template id="login">
   <div class="webTalk-loginBox">
     <div class="webTalk-loginBanner"></div>
@@ -249,6 +270,7 @@
 </template>
 <script src="/static/js/vue.min.2.2.0.js"></script>
 <script src="/static/js/vue-resource.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/js/RandomName.js"></script>
 <script src="/static/js/vue-aPlayer.js"></script>

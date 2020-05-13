@@ -212,6 +212,49 @@
       }
     }
   })
+  // 文件上传等功能
+  Vue.component("more",{
+    template:"#more",
+    data(){
+      return {
+        expressions:arr,
+        isShow:false,
+        formData:new FormData(), //new一个formData事件
+        file: null,
+      }
+    },
+    created:function () {
+      let _this=this;
+      document.addEventListener("click",(e)=>{
+        _this.isShow=false;
+      })
+    },
+    methods:{
+      handleFileChange (e) {
+        　　　　let inputDOM = this.$refs.inputer;
+        　　　　this.file = inputDOM.files[0];// 通过DOM取文件数据
+        　　　　let size = Math.floor(this.file.size / 1024);//计算文件的大小　
+               this.formData.append("file",this.file); //将file属性添加到formData里
+        　　　　//此时formData就是我们要向后台传的参数了
+                var that = this;
+                axios.post("http://112.17.176.110:254/fdfs/upload_file/",this.formData,{
+                  　'Content-Type':false,
+                }).then(function(res){
+                  　console.log(res,"此处应该是请求成功的回调")　　
+                    that.$emit("picker-expression",{"title":res.data.data.originalFileName})
+                }).catch(function(req){
+                  　console.log(req,"请求失败的回调，自己看看为啥失败")
+                })
+               
+      },
+      pickerExpression(expression){
+        this.$emit("picker-expression",expression)
+      },
+      toggleShow(){
+        this.isShow=!this.isShow;
+      }
+    }
+  })
   Vue.filter('time',(value)=>{
     if(!value){
       return value;
@@ -488,7 +531,7 @@ new Vue({
     // },
     initSocketEvent(){
       let _this=this;
-      _this.socket=io.connect('http://localhost:3000');
+      _this.socket=io.connect('112.17.176.110:245');
       _this.socket.on("message",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
         if(_this.loginUser.id!=from.id){
           _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})

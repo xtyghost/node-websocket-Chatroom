@@ -78,8 +78,8 @@ public class PLMTalkLauncher {
   public void main(String[] args) throws InterruptedException {
 
     Configuration config = new Configuration();
-    config.setHostname("localhost");
-    config.setPort(3000);
+    config.setHostname("112.17.176.110");
+    config.setPort(245);
 
     final SocketIOServer server = new SocketIOServer(config);
     server.addConnectListener(
