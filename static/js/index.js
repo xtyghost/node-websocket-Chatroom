@@ -280,6 +280,7 @@
     template:"#login",
     data(){
       return {
+        loginStates:false,
         user:{
           name:"",
           avatarUrl:"http://q.qlogo.cn/headimg_dl?dst_uin=705597001&spec=100",
@@ -328,8 +329,15 @@
         }
       },
       login(user){
-        this.isLogin =true
+        this.loginStates =true;
+        _this =this;
+        s = setInterval(function () {
+          _this.loginStates =false;
+        }, 10000);
         this.$emit("login",user)
+      },
+      isLogin(){
+        return this.loginStates;
       },
       randomText() {
         let word=new randomName().randomName();
@@ -483,6 +491,16 @@ new Vue({
         this.socket.emit("message",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false'});
       }
     },
+    /**
+     *拉取指定时间的历史信息
+     * @param {} to 
+     * @param {*} message 
+     * @param {*} type 
+     */
+    historyMessage(to,message,type,time,unit) {
+      let from=this.loginUser;
+      this.socket.emit("historyMessage",{'from':from,'to':to,'message':message,'type':type,'time': new Date().getTime(),read:'false',extra:{'time':time,'unit':unit}});
+    },
     receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read}) {
       let threadId=from.id;
       if(to.type!="user"){
@@ -548,7 +566,7 @@ new Vue({
         }
         _this.cmd(message);
       })
-      _this.socket.on("cacheMessage",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
+      _this.socket.on("historyMessage",({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})=>{
           _this.receiveMessage({'from':from,'to':to,'message':message,'type':type,'time': time,read:read})
         _this.cmd(message);
       })
@@ -612,6 +630,14 @@ new Vue({
         _this.loginUser=user;
         if(users.length>0){
           _this.onLineUsers=users;
+          for(i=0;i<users.length;i++){
+            if(users[i].type=="room"){
+              /**
+               * Days是ChronoUnit的单位
+               */
+              _this.historyMessage(users[i],"pull","all","-20","DAYS")
+            }
+          }
         }
       })
       _this.socket.on("loginFail",(message)=>{

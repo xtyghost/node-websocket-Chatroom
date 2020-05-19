@@ -16,7 +16,7 @@
 <div id="app"></div>
 <template id="tpl">
   <section>
-    <login @login="login" v-show="!loginUser.id"></login>
+    <login @login="login" v-show="!loginUser.id" ></login>
     <div class="webTalk-box" v-show="loginUser.id">
       <div class="webTalk-menu-box">
         <div class="webTalk-login-avatar" :title="loginUser.name">
@@ -256,7 +256,8 @@
         <div class="webTalk-form-inputBox">
           <input type="text" class="webTalk-user-name" placeholder="用户名" v-model="user.name">
           <input type="text" class="webTalk-user-password" placeholder="密码" v-model="user.password">
-          <button type="button" class="webTalk-formBtn" @click="login(user)">登录</button>
+          <button  type="button" class="webTalk-formBtn" @click="login(user)" v-if='!isLogin()'>登录</button>
+          <img style="padding: 10px" src="./static/images/wait.gif" _height="64" _width="64" v-else>
         </div>
       </form>
     </div>
@@ -271,6 +272,7 @@
 <script src="/static/js/vue.min.2.2.0.js"></script>
 <script src="/static/js/vue-resource.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/browse/ant-design-vue@1.6.0/dist/antd.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/static/js/RandomName.js"></script>
 <script src="/static/js/vue-aPlayer.js"></script>
